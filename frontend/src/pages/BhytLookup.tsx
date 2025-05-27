@@ -11,7 +11,10 @@ import {
   message,
   Spin,
   Empty,
-  Alert
+  Alert,
+  Space,
+  Badge,
+  Tooltip
 } from 'antd';
 import {
   SearchOutlined,
@@ -21,7 +24,9 @@ import {
   EnvironmentOutlined,
   CreditCardOutlined,
   CheckCircleOutlined,
-  CloseCircleOutlined
+  CloseCircleOutlined,
+  InfoCircleOutlined,
+  MedicineBoxOutlined
 } from '@ant-design/icons';
 import { bhytService } from '../services/bhytService';
 import type { BhytInfo } from '../services/bhytService';
@@ -82,10 +87,13 @@ const BhytLookup: React.FC = () => {
   return (
     <div className="bhyt-lookup-container">
       <div className="bhyt-lookup-header">
-        <Title level={2} className="bhyt-lookup-title">
-          <IdcardOutlined />
-          Tra cứu thông tin BHYT
-        </Title>
+        <Space align="center" size={16}>
+          <Badge count={<MedicineBoxOutlined style={{ color: '#1890ff' }} />}>
+            <Title level={2} className="bhyt-lookup-title">
+              Tra cứu thông tin BHYT
+            </Title>
+          </Badge>
+        </Space>
         <Paragraph type="secondary" className="bhyt-lookup-description">
           Nhập mã số BHXH để tra cứu thông tin thẻ bảo hiểm y tế
         </Paragraph>
@@ -93,7 +101,15 @@ const BhytLookup: React.FC = () => {
 
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={8}>
-          <Card title="Thông tin tra cứu" className="bhyt-form-card">
+          <Card 
+            title={
+              <Space>
+                <IdcardOutlined style={{ color: '#1890ff' }} />
+                <span>Thông tin tra cứu</span>
+              </Space>
+            }
+            className="bhyt-form-card"
+          >
             <Form
               form={form}
               layout="vertical"
@@ -101,7 +117,14 @@ const BhytLookup: React.FC = () => {
               autoComplete="off"
             >
               <Form.Item
-                label="Mã số BHXH"
+                label={
+                  <Space>
+                    <span>Mã số BHXH</span>
+                    <Tooltip title="Mã số BHXH gồm 10 chữ số">
+                      <InfoCircleOutlined style={{ color: '#1890ff' }} />
+                    </Tooltip>
+                  </Space>
+                }
                 name="maSoBHXH"
                 rules={[
                   { required: true, message: 'Vui lòng nhập mã số BHXH!' },
@@ -113,9 +136,10 @@ const BhytLookup: React.FC = () => {
               >
                 <Input
                   placeholder="Nhập mã số BHXH (10 chữ số)"
-                  prefix={<UserOutlined />}
+                  prefix={<UserOutlined className="site-form-item-icon" />}
                   size="large"
                   maxLength={10}
+                  className="bhyt-input"
                 />
               </Form.Item>
 
@@ -135,45 +159,75 @@ const BhytLookup: React.FC = () => {
             </Form>
 
             <Alert
-              message="Lưu ý"
-              description="Mã số BHXH gồm 10 chữ số. Vui lòng kiểm tra kỹ thông tin trước khi tra cứu."
+              message="Lưu ý quan trọng"
+              description={
+                <ul className="bhyt-alert-list">
+                  <li>Mã số BHXH gồm 10 chữ số</li>
+                  <li>Kiểm tra kỹ thông tin trước khi tra cứu</li>
+                  <li>Đảm bảo nhập đúng định dạng số</li>
+                </ul>
+              }
               type="info"
               showIcon
-              style={{ marginTop: '16px' }}
+              className="bhyt-info-alert"
             />
           </Card>
         </Col>
 
         <Col xs={24} lg={16}>
-          <Card title="Kết quả tra cứu" className="bhyt-result-card">
+          <Card 
+            title={
+              <Space>
+                <MedicineBoxOutlined style={{ color: '#1890ff' }} />
+                <span>Kết quả tra cứu</span>
+              </Space>
+            }
+            className="bhyt-result-card"
+          >
             <Spin spinning={loading} className="bhyt-loading-overlay">
               {bhytInfo ? (
-                <div>
+                <div className="bhyt-result-content">
+                  <div className="bhyt-status-header">
+                    <Badge 
+                      status={getStatusColor(bhytInfo.trangThai) as "success" | "error"}
+                      text={
+                        <Text strong className={`bhyt-status-text ${getStatusColor(bhytInfo.trangThai)}`}>
+                          {bhytInfo.trangThai}
+                        </Text>
+                      }
+                    />
+                  </div>
+
                   <Descriptions
-                    title="Thông tin thẻ BHYT"
                     bordered
-                    column={{ xs: 1, sm: 1, md: 2 }}
+                    column={{ xs: 1, sm: 2 }}
                     size="middle"
-                    className="bhyt-descriptions bhyt-result-appear"
+                    className="bhyt-descriptions"
                   >
                     <Descriptions.Item
-                      label={<><UserOutlined /> Họ và tên</>}
+                      label={<Space><UserOutlined /> Họ và tên</Space>}
                       span={2}
                     >
-                      <Text strong style={{ fontSize: '16px' }}>
+                      <Text strong className="bhyt-primary-info">
                         {bhytInfo.hoTen || 'N/A'}
                       </Text>
                     </Descriptions.Item>
 
-                    <Descriptions.Item label={<><IdcardOutlined /> Mã số BHXH</>}>
+                    <Descriptions.Item 
+                      label={<Space><IdcardOutlined /> Mã số BHXH</Space>}
+                    >
                       {bhytInfo.maSoBHXH || 'N/A'}
                     </Descriptions.Item>
 
-                    <Descriptions.Item label={<><CreditCardOutlined /> Mã thẻ</>}>
+                    <Descriptions.Item 
+                      label={<Space><CreditCardOutlined /> Mã thẻ</Space>}
+                    >
                       {bhytInfo.maThe || 'N/A'}
                     </Descriptions.Item>
 
-                    <Descriptions.Item label={<><CalendarOutlined /> Ngày sinh</>}>
+                    <Descriptions.Item 
+                      label={<Space><CalendarOutlined /> Ngày sinh</Space>}
+                    >
                       {formatDate(bhytInfo.ngaySinh)}
                     </Descriptions.Item>
 
@@ -182,54 +236,58 @@ const BhytLookup: React.FC = () => {
                     </Descriptions.Item>
 
                     <Descriptions.Item
-                      label={<><EnvironmentOutlined /> Địa chỉ</>}
+                      label={<Space><EnvironmentOutlined /> Địa chỉ</Space>}
                       span={2}
                     >
                       {bhytInfo.diaChi || 'N/A'}
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Giá trị từ ngày">
-                      {formatDate(bhytInfo.gtTheTu)}
+                      <Text type="success">{formatDate(bhytInfo.gtTheTu)}</Text>
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Giá trị đến ngày">
-                      {formatDate(bhytInfo.gtTheDen)}
+                      <Text type="warning">{formatDate(bhytInfo.gtTheDen)}</Text>
                     </Descriptions.Item>
 
                     <Descriptions.Item
                       label="Nơi đăng ký KCB"
                       span={2}
                     >
-                      {bhytInfo.noiDKKCB || 'N/A'}
+                      <Text className="bhyt-hospital-info">
+                        {bhytInfo.noiDKKCB || 'N/A'}
+                      </Text>
                     </Descriptions.Item>
 
                     <Descriptions.Item label="Mức hưởng">
-                      {bhytInfo.mucHuong || 'N/A'}
-                    </Descriptions.Item>
-
-                    <Descriptions.Item label="Trạng thái">
-                      <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        {getStatusIcon(bhytInfo.trangThai)}
-                        <Text type={getStatusColor(bhytInfo.trangThai) as any}>
-                          {bhytInfo.trangThai || 'N/A'}
-                        </Text>
-                      </span>
+                      <Badge 
+                        color="#1890ff"
+                        text={bhytInfo.mucHuong || 'N/A'} 
+                      />
                     </Descriptions.Item>
                   </Descriptions>
                 </div>
               ) : hasSearched && !loading ? (
                 <Empty
-                  image={<IdcardOutlined style={{ fontSize: '64px', color: '#d9d9d9' }} />}
-                  description="Không tìm thấy thông tin BHYT"
+                  image={<IdcardOutlined className="bhyt-empty-icon" />}
+                  description={
+                    <Text type="secondary" className="bhyt-empty-text">
+                      Không tìm thấy thông tin BHYT
+                    </Text>
+                  }
                 >
-                  <Text type="secondary">
-                    Vui lòng kiểm tra lại mã số BHXH và thử lại
-                  </Text>
+                  <Button type="primary" onClick={() => form.resetFields()}>
+                    Thử lại
+                  </Button>
                 </Empty>
               ) : (
                 <Empty
-                  image={<SearchOutlined style={{ fontSize: '64px', color: '#d9d9d9' }} />}
-                  description="Nhập mã số BHXH để bắt đầu tra cứu"
+                  image={<SearchOutlined className="bhyt-empty-icon" />}
+                  description={
+                    <Text type="secondary" className="bhyt-empty-text">
+                      Nhập mã số BHXH để bắt đầu tra cứu
+                    </Text>
+                  }
                 />
               )}
             </Spin>
