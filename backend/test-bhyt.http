@@ -1,0 +1,42 @@
+### Test BHYT Lookup API
+
+# First, login to get token
+POST http://localhost:5000/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "password"
+}
+
+###
+
+# Test BHYT lookup with token (replace TOKEN_HERE with actual token from login response)
+POST http://localhost:5000/api/bhyt/lookup
+Content-Type: application/json
+Authorization: Bearer TOKEN_HERE
+
+{
+  "maSoBHXH": "0123456789"
+}
+
+###
+
+# Test with invalid BHXH number
+POST http://localhost:5000/api/bhyt/lookup
+Content-Type: application/json
+Authorization: Bearer TOKEN_HERE
+
+{
+  "maSoBHXH": "123"
+}
+
+###
+
+# Test without authentication
+POST http://localhost:5000/api/bhyt/lookup
+Content-Type: application/json
+
+{
+  "maSoBHXH": "0123456789"
+}
