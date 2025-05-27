@@ -271,7 +271,7 @@ const BhytLookup: React.FC = () => {
                 <Empty
                   image={<IdcardOutlined className="bhyt-empty-icon" />}
                   description={
-                    <Text type="secondary" className="bhyt-empty-text">
+                    <Text type="secondary\" className="bhyt-empty-text">
                       Không tìm thấy thông tin BHYT
                     </Text>
                   }
@@ -284,7 +284,7 @@ const BhytLookup: React.FC = () => {
                 <Empty
                   image={<SearchOutlined className="bhyt-empty-icon" />}
                   description={
-                    <Text type="secondary" className="bhyt-empty-text">
+                    <Text type="secondary\" className="bhyt-empty-text">
                       Nhập mã số BHXH để bắt đầu tra cứu
                     </Text>
                   }
